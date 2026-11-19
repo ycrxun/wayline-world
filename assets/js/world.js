@@ -133,6 +133,23 @@ const createWaypointLabel = ({ title, date, color }) => {
     return sprite;
 };
 
+const createContactShadowTexture = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext("2d");
+    const gradient = context.createRadialGradient(128, 128, 18, 128, 128, 122);
+    gradient.addColorStop(0, "rgba(2, 6, 8, 0.78)");
+    gradient.addColorStop(0.52, "rgba(2, 6, 8, 0.5)");
+    gradient.addColorStop(1, "rgba(2, 6, 8, 0)");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 256, 256);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    return texture;
+};
+
 export const createWorld = ({
     canvas,
     onReady,
@@ -844,17 +861,17 @@ export const createWorld = ({
     });
     root.add(rover);
     const roverShadow = new THREE.Mesh(
-        new THREE.CircleGeometry(1.22, 32),
+        new THREE.PlaneGeometry(2.55, 3.45),
         new THREE.MeshBasicMaterial({
-            color: 0x020406,
+            map: createContactShadowTexture(),
             transparent: true,
-            opacity: 0.34,
+            opacity: 0.3,
             depthWrite: false,
         }),
     );
     roverShadow.rotation.x = -Math.PI / 2;
-    roverShadow.position.y = 0.08;
-    root.add(roverShadow);
+    roverShadow.position.y = 0.003;
+    rover.add(roverShadow);
     const roverHalo = new THREE.Mesh(
         new THREE.RingGeometry(1.34, 1.43, 48),
         new THREE.MeshBasicMaterial({
@@ -866,8 +883,8 @@ export const createWorld = ({
         }),
     );
     roverHalo.rotation.x = -Math.PI / 2;
-    roverHalo.position.y = 0.11;
-    root.add(roverHalo);
+    roverHalo.position.y = 0.012;
+    rover.add(roverHalo);
 
     const assetLoader = new GLTFLoader();
     const assetPromises = [];
@@ -1614,12 +1631,6 @@ export const createWorld = ({
             8,
             delta,
         );
-        roverShadow.position.x = rover.position.x;
-        roverShadow.position.z = rover.position.z;
-        roverShadow.position.y = surfaceY + 0.006;
-        roverHalo.position.x = rover.position.x;
-        roverHalo.position.z = rover.position.z;
-        roverHalo.position.y = surfaceY + 0.012;
         roverHalo.material.opacity = boosting ? 0.72 : 0.34;
         keyLight.position.set(rover.position.x - 18, rover.position.y + 30, rover.position.z + 20);
         keyLight.target.position.set(rover.position.x, rover.position.y, rover.position.z);
