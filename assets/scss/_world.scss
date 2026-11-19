@@ -499,13 +499,48 @@ body.world-open {
 }
 
 .world-reader__content.prose {
+    width: 100%;
     min-height: 0;
+    min-width: 0;
     flex: 1;
     max-width: none;
     padding: 26px clamp(22px, 5vw, 64px) 60px;
+    overflow-x: hidden;
     overflow-y: auto;
     color: rgba(220, 238, 235, 0.76);
     overscroll-behavior: contain;
+
+    > * {
+        max-width: 100%;
+    }
+
+    p,
+    li,
+    blockquote {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    pre,
+    .highlight,
+    .highlight pre {
+        max-width: 100%;
+        overflow-x: auto;
+        white-space: pre;
+    }
+
+    img,
+    video,
+    iframe {
+        max-width: 100%;
+        height: auto;
+    }
+
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+    }
 
     h1,
     h2,
