@@ -257,6 +257,7 @@
         let worldDataPromise = null;
         let currentWorldItem = null;
         let discoveryTimer = null;
+        let readerCloseTimer = null;
 
         const readBadgeCollection = () => {
             try {
@@ -325,24 +326,27 @@
 
         const closeReader = () => {
             if (!reader || reader.hidden) return;
+            window.clearTimeout(readerCloseTimer);
             reader.classList.remove("is-visible");
             if (reward) {
                 reward.classList.remove("is-visible");
                 reward.hidden = true;
             }
             worldController?.setInteractionEnabled(true);
-            window.setTimeout(() => {
+            readerCloseTimer = window.setTimeout(() => {
                 reader.hidden = true;
+                readerContent.scrollTop = 0;
                 canvas.focus();
             }, 220);
         };
 
         const openReader = () => {
             if (!reader || !currentWorldItem) return;
+            window.clearTimeout(readerCloseTimer);
+            readerCloseTimer = null;
             readerMeta.textContent = `${currentWorldItem.date || ""}${currentWorldItem.subtitle ? ` · ${currentWorldItem.subtitle}` : ""}`;
             readerTitle.textContent = currentWorldItem.title || "未命名内容";
             readerContent.innerHTML = currentWorldItem.html || `<p>${currentWorldItem.description || ""}</p>`;
-            readerContent.scrollTop = 0;
             if (readerProgress) readerProgress.style.width = "0%";
             if (readerPercent) readerPercent.textContent = "00%";
             if (readerFinish) readerFinish.disabled = true;
@@ -352,9 +356,15 @@
             }
             reader.hidden = false;
             worldController?.setInteractionEnabled(false);
+            const resetReaderProgress = () => {
+                readerContent.scrollTop = 0;
+                updateReaderProgress();
+            };
+            resetReaderProgress();
             requestAnimationFrame(() => {
                 reader.classList.add("is-visible");
-                updateReaderProgress();
+                resetReaderProgress();
+                requestAnimationFrame(resetReaderProgress);
                 readerContent.querySelectorAll("img").forEach((image) => {
                     image.addEventListener("load", updateReaderProgress, { once: true });
                 });
