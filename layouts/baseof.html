@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "zh-CN" }}">
+    <head>
+        {{ partial "head.html" . }}
+    </head>
+    <body>
+        <a class="skip-link" href="#main-content">跳到正文</a>
+        {{ if not .IsHome }}
+            {{ partial "site-header.html" . }}
+        {{ end }}
+        <main class="site-main" id="main-content">
+            {{ block "main" . }}{{ end }}
+        </main>
+        {{ if site.Params.world.enabled | default true }}
+            {{ partial "world-overlay.html" . }}
+        {{ end }}
+        {{ $app := resources.Get "js/app.js" | js.Build (dict "targetPath" "js/app.js" "minify" (not hugo.IsDevelopment)) | fingerprint }}
+        <script src="{{ $app.RelPermalink }}" defer></script>
+    </body>
+</html>

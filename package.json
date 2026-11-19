@@ -1,0 +1,14 @@
+{
+  "name": "wayline-world",
+  "private": true,
+  "scripts": {
+    "styles": "sass assets/scss/main.scss assets/css/main.css --style=compressed --no-source-map",
+    "styles:watch": "sass assets/scss/main.scss assets/css/main.css --style=compressed --no-source-map --watch"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "sass": "^1.94.0"
+  }
+}

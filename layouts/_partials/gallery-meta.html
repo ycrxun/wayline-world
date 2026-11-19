@@ -1,0 +1,23 @@
+{{- $page := . -}}
+{{- $category := $page.Params.category | default "" -}}
+{{- if not $category -}}
+    {{- with index ($page.GetTerms "categories") 0 -}}
+        {{- $category = .LinkTitle -}}
+    {{- end -}}
+{{- end -}}
+{{- $parts := slice -}}
+{{- with $category -}}
+    {{- $parts = $parts | append . -}}
+{{- end -}}
+{{- with $page.Params.location -}}
+    {{- $parts = $parts | append . -}}
+{{- end -}}
+{{- with $page.Params.camera -}}
+    {{- $parts = $parts | append . -}}
+{{- end -}}
+{{- return (dict
+    "category" $category
+    "location" ($page.Params.location | default "")
+    "camera" ($page.Params.camera | default "")
+    "text" (delimit $parts " · ")
+) -}}

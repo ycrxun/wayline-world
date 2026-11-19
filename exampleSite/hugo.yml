@@ -1,0 +1,39 @@
+baseURL: https://example.org/
+title: Wayline World
+theme: wayline-world
+defaultContentLanguage: zh-cn
+hasCJKLanguage: true
+
+languages:
+    zh-cn:
+        locale: zh-CN
+        label: 简体中文
+        weight: 1
+
+pagination:
+    pagerSize: 8
+
+permalinks:
+    posts: /:slug/
+    page: /:slug/
+
+params:
+    description: 一个把文章、时间与影像放进可驾驶三维世界里的 Hugo 主题。
+    hero:
+        title: 把文章、时间与记忆，<br>放进一个可以驾驶的世界。
+        intro: 这不是一个带 3D 彩蛋的博客主题，而是一个以空间探索为第一入口的叙事主题。
+    world:
+        enabled: true
+        brand: WAYLINE WORLD
+        codename: FIELD NOTE / 01
+        eyebrow: WORLD-FIRST HUGO THEME
+        introTitle: 沿着道路，<br>读取散落在世界里的故事。
+        intro: 白天山间公路、文章时间线、影像节点和阅读徽章，都由同一个 3D 世界驱动。
+    gallery:
+        enabled: false
+        source: gallery
+
+markup:
+    goldmark:
+        renderer:
+            unsafe: true

@@ -1,0 +1,104 @@
+{{- $archiveItems := slice -}}
+{{- range (where site.RegularPages "Section" "posts").ByDate -}}
+    {{- $cover := partial "cover.html" . -}}
+    {{- $category := "" -}}
+    {{- with index (.GetTerms "categories") 0 -}}{{- $category = .LinkTitle -}}{{- end -}}
+    {{- $tags := slice -}}
+    {{- range .GetTerms "tags" -}}{{- $tags = $tags | append .LinkTitle -}}{{- end -}}
+    {{- $archiveItems = $archiveItems | append (dict
+        "date" (.Date.Format "2006.01")
+        "title" .Title
+        "subtitle" $category
+        "description" (.Description | default (.Summary | plainify | truncate 140))
+        "url" .RelPermalink
+        "image" ($cover.url | default "")
+        "html" .Content
+        "tags" $tags
+    ) -}}
+{{- end -}}
+
+{{- $aboutItems := slice -}}
+{{- with site.GetPage "/page/about" -}}
+    {{- $resume := .Params.resume -}}
+    {{- with $resume.education -}}
+        {{- $aboutItems = $aboutItems | append (dict
+            "date" "2011.09"
+            "title" .school
+            "subtitle" (printf "%s · 本科 · %s" .major .degree)
+            "description" "完成计算机科学与技术本科阶段学习。"
+            "url" "/about/"
+            "image" ""
+            "html" (printf "<p>%s</p><p>%s · 本科 · %s</p><p>%s</p>" .school .major .degree .period)
+            "tags" (slice "教育" "计算机科学")
+        ) -}}
+    {{- end -}}
+    {{- range collections.Reverse $resume.experiences -}}
+        {{- $aboutItems = $aboutItems | append (dict
+            "date" (index (split .period " - ") 0)
+            "title" .company
+            "subtitle" .role
+            "description" .summary
+            "url" "/about/"
+            "image" ""
+            "html" (printf "<p><strong>%s</strong></p><p>%s</p><p>%s</p>" .role .summary .period)
+            "tags" (slice "工作经历" .role)
+        ) -}}
+    {{- end -}}
+    {{- $aboutItems = $aboutItems | append (dict
+        "date" "NOW"
+        "title" $resume.name
+        "subtitle" (printf "%s · %s · %s" $resume.role $resume.location (printf "%d 年经验" (sub now.Year $resume.startYear)))
+        "description" $resume.summary
+        "url" "/about/"
+        "image" ""
+        "html" (printf "<p><strong>%s</strong></p><p>%s</p><p>%s · %s</p>" $resume.name $resume.summary $resume.role $resume.location)
+        "tags" (slice "架构师" "个人概览")
+    ) -}}
+{{- end -}}
+
+{{- $galleryItems := slice -}}
+{{- if site.Params.gallery.enabled -}}
+    {{- $gallerySource := site.Params.gallery.source | default "gallery" -}}
+    {{- range first (site.Params.gallery.limit | default 12) (where site.RegularPages "Section" $gallerySource).ByDate -}}
+        {{- $galleryPage := . -}}
+        {{- $image := partial "gallery-image.html" $galleryPage -}}
+        {{- $meta := partial "gallery-meta.html" $galleryPage -}}
+        {{- $galleryLink := "" -}}
+        {{- if eq $gallerySource "posts" -}}
+            {{- $galleryLink = $galleryPage.RelPermalink -}}
+        {{- else -}}
+            {{- with $galleryPage.Params.link -}}{{- $galleryLink = . -}}{{- end -}}
+        {{- end -}}
+        {{- with $image.thumb -}}
+            {{- $galleryTags := slice -}}
+            {{- range $galleryPage.GetTerms "tags" -}}{{- $galleryTags = $galleryTags | append .LinkTitle -}}{{- end -}}
+            {{- $galleryHTML := string $galleryPage.Content -}}
+            {{- if eq (trim $galleryHTML " \n\r\t") "" -}}
+                {{- $caption := $galleryPage.Description | default ($galleryPage.Summary | plainify) -}}
+                {{- $galleryHTML = printf `<figure><img src="%s" alt="%s" loading="lazy"><figcaption>%s%s</figcaption></figure>` $image.full $galleryPage.Title $galleryPage.Title $caption -}}
+            {{- end -}}
+            {{- with $galleryPage.Params.credit -}}
+                {{- $license := $galleryPage.Params.license | default "授权信息" -}}
+                {{- $licenseUrl := $galleryPage.Params.licenseUrl | default "#" -}}
+                {{- $sourceUrl := $galleryPage.Params.link | default "" -}}
+                {{- $creditHTML := printf `<p class="gallery-credit">PHOTO · %s · <a href="%s" target="_blank" rel="license noopener">%s</a>` . $licenseUrl $license -}}
+                {{- with $sourceUrl -}}
+                    {{- $creditHTML = printf `%s · <a href="%s" target="_blank" rel="noopener">原始页面 ↗</a>` $creditHTML . -}}
+                {{- end -}}
+                {{- $galleryHTML = printf "%s%s</p>" $galleryHTML $creditHTML -}}
+            {{- end -}}
+            {{- $galleryItems = $galleryItems | append (dict
+                "date" ($galleryPage.Date.Format "2006.01")
+                "title" $galleryPage.Title
+                "subtitle" ($meta.category | default "VISUAL JOURNAL")
+                "description" ($galleryPage.Description | default ($galleryPage.Summary | plainify | truncate 110))
+                "url" $galleryLink
+                "image" $image.thumb
+                "html" $galleryHTML
+                "tags" $galleryTags
+            ) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- dict "archive" $archiveItems "about" $aboutItems "gallery" $galleryItems | jsonify -}}

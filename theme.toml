@@ -1,0 +1,15 @@
+name = "Wayline World"
+version = "0.1.0"
+license = "MIT"
+description = "A world-first Hugo theme for explorable articles, timelines, photography, and interactive 3D landscapes."
+min_version = "0.146.0"
+
+[author]
+name = "Soi"
+homepage = "https://ronggle.com"
+
+[features]
+3d = true
+responsive = true
+taxonomies = true
+dark_mode = true

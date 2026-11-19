@@ -1,0 +1,25 @@
+{{- $page := . -}}
+{{- $cover := dict -}}
+{{- with .Params.image -}}
+    {{- $path := . -}}
+    {{- with $page.Resources.GetMatch $path -}}
+        {{- $resource := . -}}
+        {{- $url := $resource.RelPermalink -}}
+        {{- $width := "" -}}
+        {{- $height := "" -}}
+        {{- if reflect.IsImageResourceProcessable $resource -}}
+            {{- $processed := $resource.Fit "1200x800" -}}
+            {{- $url = $processed.RelPermalink -}}
+            {{- $width = $processed.Width -}}
+            {{- $height = $processed.Height -}}
+        {{- end -}}
+        {{- $cover = dict "url" $url "width" $width "height" $height "alt" ($page.Title) -}}
+    {{- else -}}
+        {{- $url := $path -}}
+        {{- if not (or (hasPrefix $path "http://") (hasPrefix $path "https://") (hasPrefix $path "/")) -}}
+            {{- $url = $path | relURL -}}
+        {{- end -}}
+        {{- $cover = dict "url" $url "alt" $page.Title -}}
+    {{- end -}}
+{{- end -}}
+{{- return $cover -}}

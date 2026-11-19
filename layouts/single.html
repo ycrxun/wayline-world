@@ -1,0 +1,7 @@
+{{ define "main" }}
+<article class="page-shell">
+    <span class="eyebrow">{{ .Date.Format "2006.01.02" }} · {{ .Section | upper }}</span>
+    <h1>{{ .Title }}</h1>
+    <div class="prose">{{ .Content }}</div>
+</article>
+{{ end }}

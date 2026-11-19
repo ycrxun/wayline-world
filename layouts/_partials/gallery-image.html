@@ -1,0 +1,36 @@
+{{- $page := . -}}
+{{- $image := dict -}}
+{{- with .Params.image -}}
+    {{- $path := path.Base . -}}
+    {{- with $page.Resources.GetMatch $path -}}
+        {{- $resource := . -}}
+        {{- $thumb := $resource -}}
+        {{- $full := $resource -}}
+        {{- $width := "" -}}
+        {{- $height := "" -}}
+        {{- if reflect.IsImageResourceProcessable $resource -}}
+            {{- if gt $resource.Width 900 -}}
+                {{- $thumb = $resource.Resize "900x" -}}
+            {{- end -}}
+            {{- if gt $resource.Width 1600 -}}
+                {{- $full = $resource.Resize "1600x" -}}
+            {{- end -}}
+            {{- $width = $thumb.Width -}}
+            {{- $height = $thumb.Height -}}
+        {{- end -}}
+        {{- $image = dict
+            "thumb" $thumb.RelPermalink
+            "full" $full.RelPermalink
+            "width" $width
+            "height" $height
+            "alt" $page.Title
+        -}}
+    {{- else -}}
+        {{- $url := . -}}
+        {{- if not (or (hasPrefix $url "http://") (hasPrefix $url "https://") (hasPrefix $url "/")) -}}
+            {{- $url = $url | relURL -}}
+        {{- end -}}
+        {{- $image = dict "thumb" $url "full" $url "alt" $page.Title -}}
+    {{- end -}}
+{{- end -}}
+{{- return $image -}}
