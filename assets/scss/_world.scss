@@ -1452,7 +1452,7 @@ body.world-open {
 
 .world-nav {
     border-color: rgba(21, 50, 58, 0.14);
-    background: rgba(255, 251, 238, 0.8);
+    background: rgba(255, 251, 238, 0.94);
     box-shadow: 0 22px 60px rgba(37, 70, 61, 0.14);
 
     a,
@@ -1468,12 +1468,16 @@ body.world-open {
         }
     }
 
-    strong {
-        color: #17343a;
+    a strong,
+    button strong {
+        color: #142f35;
+        font-weight: 700;
     }
 
-    small {
-        color: rgba(21, 50, 58, 0.5);
+    a small,
+    button small {
+        color: rgba(21, 50, 58, 0.72);
+        font-weight: 600;
     }
 
     button[data-world-section="archive"] > span {
